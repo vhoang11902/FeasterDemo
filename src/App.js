@@ -1,24 +1,75 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { publicRoutes } from "./routes";
+import { privateRoutes } from "./routes";
+import { AdminLayouts } from "./Layouts";
+import { Fragment } from "react";
+import { isAuthenticated } from "./pages/Admin/Auth/checkAuth";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          {publicRoutes.map((route, index) => {
+            const Page = route.component;
+
+            let Layout = AdminLayouts;
+
+            if (route.layout) {
+              Layout = route.layout;
+            } else if (route.layout === null) {
+              Layout = Fragment;
+            }
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+                }
+              />
+            );
+          })}
+          {privateRoutes.map((route, index) => {
+            const Page = route.component;
+            let Layout = AdminLayouts;
+            if (route.layout) {
+              Layout = route.layout;
+            } else if (route.layout === null) {
+              Layout = null;
+            }
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  route.private ? (
+                    isAuthenticated() ? (
+                      <Layout>
+                        <Page />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  ) : (
+                    <Layout>
+                      <Page />
+                    </Layout>
+                  )
+                }
+              />
+            );
+          })}
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

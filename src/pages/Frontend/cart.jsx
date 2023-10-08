@@ -10,9 +10,13 @@ import {
   faTruckRampBox,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
-
+import BreadCrumb from "../../components/Breadcrumb/breadCrumb";
 function Cart() {
   const navigate = useNavigate();
+  const routes = [
+    { path: "/" },
+    { name:"Cart"}
+  ];
   const [cartItems, setCartItems] = useContext(CartContext);
   const [total, setTotal] = useState(0);
   const [index, setIndex] = useState(0);
@@ -65,7 +69,10 @@ function Cart() {
   };
 
   return (
-    <div className="mx-[0px]">
+    <div className="mx-[100px] mt-5 mb-5 max-lg:mx-[20px]">
+              <div className="mb-6">
+    <BreadCrumb  routes={routes} />
+    </div>
       <div className="mb-6 flex">
         <div className="flex-[70%] text-4xl font-semibold mr-8">
           <h2 className="mb-2">My Cart</h2>

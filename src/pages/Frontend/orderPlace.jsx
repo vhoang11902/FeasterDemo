@@ -4,7 +4,7 @@ function OrderPlace() {
     const { orderId } = useParams();
 
   return (
-    <div className="text-center pt-20">
+    <div className=" text-center pt-20">
       <h1 className="text-2xl font-semibold">Thank you for your order !!!</h1>
       <h2 className="text-2xl my-5"> Your order code is: {orderId}</h2>
       <h2 className="text-2xl">We also sent a same code to your email to confirm your order !!!</h2>

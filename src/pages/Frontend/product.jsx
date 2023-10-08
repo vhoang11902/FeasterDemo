@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import {useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import CartContext from "./CartContext";
 import DrawerCart from "../../components/CartDrawer/cartDrawer";
 // api call
@@ -7,12 +7,13 @@ import request from "../../utils/request";
 // icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faQuestion } from "@fortawesome/free-solid-svg-icons";
-
-
+import BreadCrumb from "../../components/Breadcrumb/breadCrumb";
 function Product() {
   const { id } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const category_name = searchParams.get("category");
   const [quantity, setQuantity] = useState(1);
-
   const minus = () => {
     quantity > 1 && setQuantity((quantity) => quantity - 1);
   };
@@ -26,9 +27,17 @@ function Product() {
   const [activeTab, setActiveTab] = useState("DESCRIPTION"); // Giá trị ban đầu là tab DESCRIPTION
   const [newPrice, setNewPrice] = useState("");
   const [maxQuantity, setMaxQuantity] = useState("");
-
+  const routes = [
+    { path: "/" },
+    {
+      path: `/category/${proData.map((pro) => pro.category_id)}`,
+      name: category_name,
+    },
+    {
+      name: proData.map((pro) => pro.product_name),
+    },
+  ];
   const [isCartOpen, setIsCartOpen] = useState(false);
-  
   const handleOpenCartDrawer = () => {
     setIsCartOpen(true);
   };
@@ -60,7 +69,7 @@ function Product() {
   useEffect(() => {
     // attribute
     request
-      .get('/allAttribute')
+      .get("/allAttribute")
       .then((response) => {
         setAttribute(response.data);
       })
@@ -80,34 +89,33 @@ function Product() {
     if (matchedSku) {
       setNewPrice(matchedSku.price);
       setMaxQuantity(matchedSku.stock);
-      
     } else {
       setNewPrice(null);
     }
-    const storedCartItems = JSON.parse(localStorage.getItem('cartItems'));
-  if (storedCartItems) {
-    setCartItems(storedCartItems);
-  }
-
+    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
+    if (storedCartItems) {
+      setCartItems(storedCartItems);
+    }
   }, [selectedValues]);
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const matchedSku = findMatchedSku();
     if (!matchedSku) {
       return;
     }
-  
+
     const product = { ...proData[0], quantity };
     let updatedCartItems = [];
-  
-    if (Array.isArray(cartItems)) { // Kiểm tra xem cartItems có phải là một mảng không
-      const index = cartItems.findIndex(item =>
-        item.product.product_id === product.product_id &&
-        JSON.stringify(item.attributes) === JSON.stringify(selectedValues)
+
+    if (Array.isArray(cartItems)) {
+      const index = cartItems.findIndex(
+        (item) =>
+          item.product.product_id === product.product_id &&
+          JSON.stringify(item.attributes) === JSON.stringify(selectedValues)
       );
-  
-      if (index === -1) { // Nếu không tìm thấy sản phẩm trong giỏ hàng
+
+      if (index === -1) {
         updatedCartItems = [
           ...cartItems,
           {
@@ -115,10 +123,10 @@ function Product() {
             product: product,
             price: newPrice,
             quantity: quantity,
-            attributes: selectedValues
-          }
+            attributes: selectedValues,
+          },
         ];
-      } else { // Nếu tìm thấy sản phẩm trong giỏ hàng
+      } else {
         updatedCartItems = cartItems.map((item, itemIndex) => {
           if (itemIndex === index) {
             return {
@@ -129,34 +137,44 @@ function Product() {
           return item;
         });
       }
-    } else { // Nếu cartItems không phải là một mảng
+    } else {
       updatedCartItems = [
         {
           id: matchedSku.sku_id,
           product: product,
           price: newPrice,
           quantity: quantity,
-          attributes: selectedValues
-        }
+          attributes: selectedValues,
+        },
       ];
     }
-  
+
     setCartItems(updatedCartItems);
-    localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+    localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
     handleOpenCartDrawer();
   };
 
   return (
-    <div className="max-w-[1600px]  mx-0 my-[auto]">
+    <div className="mx-[100px] mt-5 mb-5 max-lg:mx-[20px] max-w-[1600px] my-[auto]">
+    <div className="mb-6">
+    <BreadCrumb  routes={routes} />
+    </div>
       <form onSubmit={handleSubmit}>
-      {proData.map((product) => (
-        <div key={product.product_id} className="max-w-[1600px] grid grid-cols-[42%,30%] gap-[8%] justify-center">
-          <div className="bg-blue-400">
-            <div className="bg-white w-full h-full min-h-[529px] flex items-start ">
-              <img alt="" src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`} className="w-full"></img>
+        {proData.map((product) => (
+          <div
+            key={product.product_id}
+            className="max-w-[1600px] grid grid-cols-[42%,30%] gap-[8%] justify-center"
+          >
+            <div className="bg-blue-400">
+              <div className="bg-white w-full h-full min-h-[529px] flex items-center ">
+                <img
+                  alt=""
+                  src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`}
+                  className="w-full"
+                ></img>
+              </div>
             </div>
-          </div>
-            <div >
+            <div className="">
               <h1 className="text-[22px] font-semibold leading-[1.08] mb-[14px]">
                 {product.product_name}
               </h1>
@@ -257,14 +275,19 @@ function Product() {
                 >
                   +
                 </div>
-                <button type="submit" className="w-[60%] h-11 border-[#eee] flex justify-center items-center text-white bg-black rounded-md rounded-tl-none rounded-bl-none cursor-pointer font-thin uppercase hover:bg-[#595e62] hover:transition-all">
+                <button
+                  type="submit"
+                  className="w-[60%] h-11 border-[#eee] flex justify-center items-center text-white bg-black rounded-md rounded-tl-none rounded-bl-none cursor-pointer font-thin uppercase hover:bg-[#595e62] hover:transition-all"
+                >
                   Add To Cart
                 </button>
-                <DrawerCart isOpenCart={isCartOpen} onCloseCart={handleCloseCartDrawer} />
+                <DrawerCart
+                  isOpenCart={isCartOpen}
+                  onCloseCart={handleCloseCartDrawer}
+                />
               </div>
             </div>
-
-        </div>
+          </div>
         ))}
       </form>
 
@@ -393,7 +416,11 @@ function Product() {
         <div className="flex overflow-hidden transform-none h-[300px] flex-row">
           <div className="w-[201.833333px] mx-2 border-[1px]">
             <div className="bg-white h-[200px] flex items-center">
-              <img alt="" src={`http://localhost/feaster/storage/app/public/uploads/product/2`} className=""></img>
+              <img
+                alt=""
+                src={`http://localhost/feaster/storage/app/public/uploads/product/2`}
+                className=""
+              ></img>
             </div>
             <div className="text-sm mb-3 min-h-[30px]">
               <h2>FREEDOM Floating Bed Base</h2>
@@ -402,7 +429,11 @@ function Product() {
           </div>
           <div className="w-[201.833333px] mx-2 border-[1px]">
             <div className="bg-white h-[200px] flex items-center">
-              <img alt="" src={`http://localhost/feaster/storage/app/public/uploads/product/2`} className=""></img>
+              <img
+                alt=""
+                src={`http://localhost/feaster/storage/app/public/uploads/product/2`}
+                className=""
+              ></img>
             </div>
             <div className="text-sm mb-3 min-h-[30px]">
               <h2>FREEDOM Floating Bed Base</h2>
@@ -411,7 +442,11 @@ function Product() {
           </div>
           <div className="w-[201.833333px] mx-2 border-[1px]">
             <div className="bg-white h-[200px] flex items-center">
-              <img alt="" src={`http://localhost/feaster/storage/app/public/uploads/product/2`} className=""></img>
+              <img
+                alt=""
+                src={`http://localhost/feaster/storage/app/public/uploads/product/2`}
+                className=""
+              ></img>
             </div>
             <div className="text-sm mb-3 min-h-[30px]">
               <h2>FREEDOM Floating Bed Base</h2>
@@ -420,7 +455,11 @@ function Product() {
           </div>
           <div className="w-[201.833333px] mx-2 border-[1px]">
             <div className="bg-white h-[200px] flex items-center">
-              <img alt="" src={`http://localhost/feaster/storage/app/public/uploads/product/2`} className=""></img>
+              <img
+                alt=""
+                src={`http://localhost/feaster/storage/app/public/uploads/product/2`}
+                className=""
+              ></img>
             </div>
             <div className="text-sm mb-3 min-h-[30px]">
               <h2>FREEDOM Floating Bed Base</h2>

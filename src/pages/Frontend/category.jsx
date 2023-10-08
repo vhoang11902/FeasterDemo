@@ -6,8 +6,8 @@ import ReactPaginate from "react-paginate";
 // icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
-function Category() {
+import BreadCrumb from "../../components/Breadcrumb/breadCrumb";
+function Category({category_name}) {
   const { id } = useParams();
   const [nameCategory, setNameCategory] = useState("");
 
@@ -15,11 +15,11 @@ function Category() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
-
+  const routes = [{ path: '/', name: 'Home' },{path:`/category/${id}`,name: nameCategory}];
   useEffect(() => {
     request
       .get(`/category/${id}`)
-      .then((response) => { 
+      .then((response) => {
         Object.values(response.data).map((cate) => {
           setNameCategory(cate.category_name);
           setProducts(cate.product);
@@ -42,10 +42,13 @@ function Category() {
   );
 
   const handleSelectProduct = (product_id) => {
-    navigate(`/product/${product_id}`);
+    navigate(`/product/${product_id}?category=${nameCategory}`);
   };
   return (
-    <>
+    <div className="mx-[100px] mt-5 mb-5 max-lg:mx-[20px]">
+    <div className="mb-6">
+    <BreadCrumb  routes={routes} />
+    </div>
       <div className="text-3xl font-bold ">{nameCategory}</div>
       <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 px-10 pt-10">
         {currentProducts.map((product) => (
@@ -54,12 +57,13 @@ function Category() {
             key={product.product_id}
             className="w-full min-w-[250px] border-[1px] p-5 cursor-pointer hover:shadow-lg"
           >
-          <div className="min-w-[200px] min-h-[250px] mb-3 flex justify-center">
-          <img
-              className=""
-src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`}
-            />
-          </div>
+            <div className="min-w-[200px] min-h-[250px] mb-5 flex justify-center">
+              <img
+                className=""
+                src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`}
+              />
+            </div>
+            <div className="pt-7">
             <h2 className="font-semibold">{product.product_name}</h2>
             <h2 className="font-thin">Start from</h2>
             <span className="text-2xl font-semibold">
@@ -70,6 +74,8 @@ src={`http://localhost/feaster/storage/app/public/uploads/product/${product.prod
                 .format(product.product_price)
                 .replace(/\.00$/, "")}
             </span>
+            </div>
+            
           </div>
         ))}
       </div>
@@ -88,7 +94,7 @@ src={`http://localhost/feaster/storage/app/public/uploads/product/${product.prod
           marginPagesDisplayed={0}
         />
       </div>
-    </>
+    </div>
   );
 }
 

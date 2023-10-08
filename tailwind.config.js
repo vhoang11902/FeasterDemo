@@ -13,6 +13,7 @@ export default {
     },
     fontFamily: {
       'body': ['Helvetica', 'Arial', 'sans-serif'],
+      'aboutUs': ['Segoe UI', 'serif']
     
     }
   },

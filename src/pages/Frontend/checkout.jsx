@@ -8,10 +8,21 @@ import {
   faTruckRampBox,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
-
+import BreadCrumb from "../../components/Breadcrumb/breadCrumb";
 import request from "../../utils/request";
 function CheckOut() {
   const navigate = useNavigate();
+  const routesCheckOut = [
+    { path: "/" },
+    { path: "/cart", name: "Cart" },
+    { name: "Check Out" },
+  ];
+  const routesPayment = [
+    { path: "/" },
+    { path: "/cart", name: "Cart" },
+    { name: "Check Out" },
+    {name:"Payment"},
+  ];
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [index, setIndex] = useState("2");
@@ -36,7 +47,6 @@ function CheckOut() {
     const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
     setCartItems(storedCartItems);
   }, []);
-
 
   useEffect(() => {
     let sum = 0;
@@ -149,7 +159,15 @@ function CheckOut() {
     });
   };
   return (
-    <div className="m-[0px]">
+    <div className="">
+      <div className="mb-6">
+        <div style={{ display: showPayment ? "none" : "block" }}>
+          <BreadCrumb routes={routesCheckOut} />
+        </div>
+        <div style={{ display: !editing ? "block" : "none" }}>
+          <BreadCrumb routes={routesPayment} />
+        </div>
+      </div>
       <div className="mb-6 flex">
         <div className="flex-[70%]  font-semibold mr-8">
           <h2 className="mb-2 text-2xl">Secure Checkout</h2>
@@ -371,7 +389,9 @@ function CheckOut() {
                     <div className="m-3 pb-4 border-[#eee] flex mx-[-15px] flex-wrap">
                       <div className="flex-[25%] max-w-[75%] px-4">
                         <div className="ml-4 max-h-[149px] max-w-[149px] min-h-[149px] w-full h-full bg-white flex justify-center items-center">
-                          <img src={`http://localhost/feaster/storage/app/public/uploads/product/${item.product.product_image}`}></img>
+                          <img
+                            src={`http://localhost/feaster/storage/app/public/uploads/product/${item.product.product_image}`}
+                          ></img>
                         </div>
                       </div>
                       <div className="flex-[75%] max-w-[75%] px-4 text-sm">

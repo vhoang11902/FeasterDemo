@@ -10,7 +10,7 @@ function HomeLayouts({ children }) {
       <CartContext.Provider value={[cartItems, setCartItems]}>
         <Header />
         <NavigationBar />
-        <div className="mx-[100px] mt-12 mb-5 max-lg:mx-[20px]">{children}</div>
+        <div className="">{children}</div>
         <Footer />
       </CartContext.Provider>
     </div>

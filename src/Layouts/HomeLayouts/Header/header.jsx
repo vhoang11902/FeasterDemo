@@ -16,7 +16,6 @@ import DrawerCart from "../../../components/CartDrawer/cartDrawer";
 function Header() {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState("");
-  
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
     setOpen(true);
@@ -103,7 +102,7 @@ function Header() {
     e.preventDefault();
     navigate(`/search/${searchData}`)};
   return (
-    <div className="sticky h-[100px] top-0 grid grid-cols-6 bg-white shadow-md justify-between">
+    <div className="sticky h-[100px] top-0 grid grid-cols-6 bg-white justify-between shadow-md">
       <div className="col-span-2 flex items-center justify-start pl-3 max-lg:col-span-3">
         <FaBars
           className="lg:hidden text-xl ml-5"
@@ -143,7 +142,7 @@ function Header() {
       <form onSubmit={handleSearch} className="w-full relative max-lg:hidden">
         <div className="flex">
           <input
-            className="w-full h-[45px] p-4 z-10 relative text-lg  border rounded-md  hover:border-gray-600 transition-all focus:outline-none"
+            className="w-full h-[45px] p-4 z-10 relative text-lg  border rounded-sm  hover:border-gray-600 transition-all focus:outline-none"
             placeholder="SEARCH"
             name="keywords_submit"
             type="text"
@@ -166,14 +165,16 @@ function Header() {
         <div className="flex flex-row">
           <NavLink to="/dashboard" className="p-4">
             <FontAwesomeIcon icon={faUser} size="xl" />
+
           </NavLink>
-          <div className="p-4">
+          <div className="relative z-0 p-4">
             <FontAwesomeIcon
-              
+              className=""
               onClick={handleOpenCartDrawer}
               icon={faCartShopping}
               size="xl"
             />
+            <span className="w-4 h-4 py-[1px] absolute text-xs text-white text-center items-center bg-red-600 rounded-full right-[10px] top-[8px] z-10">{index}</span>
             <DrawerCart
               isOpenCart={isCartOpen}
               onCloseCart={handleCloseCartDrawer}

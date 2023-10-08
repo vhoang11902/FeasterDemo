@@ -36,7 +36,7 @@ function ProductSearch() {
     navigate(`/product/${product_id}`);
   };
   return (
-    <>
+    <div className="mx-[100px] mt-12 mb-5 max-lg:mx-[20px]">
       <div className="text-3xl font-bold ">Search: {id}</div>
       <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 px-10 pt-10">
         {currentProducts.map((product) => (
@@ -79,7 +79,7 @@ src={`http://localhost/feaster/storage/app/public/uploads/product/${product.prod
           marginPagesDisplayed={0}
         />
       </div>
-    </>
+    </div>
   );
 }
 

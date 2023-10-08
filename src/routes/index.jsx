@@ -38,13 +38,12 @@ const publicRoutes = [
   // Checkout
   { path: "/checkout", component: CheckOut, layout: CheckOutLayouts },
   { path: "/orderPlace/:orderId", component: OrderPlace, layout: CheckOutLayouts },
-  { path: "/dashboard", component: Dashboard, },
-  // frontend
+
 ];
 
 export { publicRoutes };
 const privateRoutes = [
-
+  { path: "/dashboard", component: Dashboard, private: true},
   { path: "/addCategory", component: AddCategory, private: true },
   { path: "/editCategory/:id", component: EditCategory, private: true },
   { path: "/allCategory", component: AllCategory, private: true },

@@ -23,7 +23,7 @@ function Cart() {
   useEffect(() => {
     const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
     setCartItems(storedCartItems);
-  }, []);
+  }, [cartItems]);
   useEffect(() => {
     setTotal(calculateTotal(cartItems));
   }, [cartItems]);
@@ -73,7 +73,7 @@ function Cart() {
               <div className="mb-6">
     <BreadCrumb  routes={routes} />
     </div>
-      <div className="mb-6 flex">
+      <div className="mb-6 flex max-lg:block">
         <div className="flex-[70%] text-4xl font-semibold mr-8">
           <h2 className="mb-2">My Cart</h2>
         </div>
@@ -98,7 +98,7 @@ function Cart() {
         </div>
       </div>
       {/* cart content */}
-      <div className="pt-6 flex">
+      <div className="pt-6 flex max-lg:block">
         <div className="flex-[70%] block box-border">
           {cartItems === null ?(
             <p>Your cart is empty.</p>
@@ -109,7 +109,8 @@ function Cart() {
                   <div className="m-3 pb-4 border-[#eee] flex mx-[-15px] flex-wrap">
                     <div className="flex-[25%] max-w-[75%] px-4">
                       <div className="ml-4 max-h-[149px] max-w-[149px] min-h-[149px] w-full h-full bg-white flex justify-center items-center">
-                        <img src={`http://localhost/feaster/storage/app/public/uploads/product/${item.product.product_image}`}></img>
+                        <img src={`http://localhost/feaster/storage/app/public/uploads/product/${item.product.product_image}`}
+                        alt=""></img>
                       </div>
                     </div>
                     <div className="flex-[75%] max-w-[75%] px-4 text-sm">
@@ -135,7 +136,7 @@ function Cart() {
                         </div>
                         <div className="max-w-full h-11">
                           <div className="items-center flex flex-wrap">
-                            <div className="text-sm font-medium flex-[40%] ">
+                            <div className="text-sm font-medium flex-[40%] max-lg:flex-[20%]">
                               {Intl.NumberFormat("en-US", {
                                 style: "currency",
                                 currency: "USD",
@@ -147,7 +148,7 @@ function Cart() {
                               <div className="flex flex-row justify-center items-center">
                                 <button
                                   onClick={() => minus(item)}
-                                  className="h-[44px] w-[44px] text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md font-medium"
+                                  className="h-[44px] w-[44px] max-lg:h-[25px] max-lg:w-[25px] max-lg:text-sm text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md font-medium"
                                 >
                                   -
                                 </button>
@@ -155,11 +156,11 @@ function Cart() {
                                   type="text"
                                   value={item.quantity}
                                   readOnly
-                                  className="h-[44px] w-[44px] mx-1 text-center text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md "
+                                  className="h-[44px] w-[44px] max-lg:h-[25px] max-lg:w-[25px] max-lg:text-sm mx-1 text-center text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md "
                                 />
                                 <button
                                   onClick={() => plus(item)}
-                                  className="h-[44px] w-[44px] text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md font-semibold"
+                                  className="h-[44px] w-[44px] max-lg:h-[25px] max-lg:w-[25px] max-lg:text-sm text-lg border-[1px] border-[#eee] bg-[#f9f9f9] rounded-md font-semibold"
                                 >
                                   +
                                 </button>
@@ -195,7 +196,7 @@ function Cart() {
             </div>
           )}
         </div>
-        <div className="flex-[30%] ml-8 bg-[#f9f9f9] p-4">
+        <div className="flex-[30%] ml-8 bg-[#f9f9f9] p-4 max-lg:ml-0">
           <h4 className="font-semibold mb-4 uppercase">ORDER SUMMARY</h4>
           <div className="mt-4 ">
             <div className="mb-2 flex justify-between text-sm font-thin">
@@ -245,13 +246,13 @@ function Cart() {
         <h1 className="font-semibold text-xl py-2 flex justify-center">
           Online ordering made easy
         </h1>
-        <div className="flex justify-center px-40">
+        <div className="flex justify-center px-40 max-lg:px-0">
           <div className="flex-[25%] py-[3%] px-[2%] text-center">
             <div className="py-8">
               <FontAwesomeIcon icon={faTruck} size="2xl" />
             </div>
-            <div className="font-semibold text-lg w-full">Delivery Options</div>
-            <div className="font-thin text-sm">
+            <div className="font-semibold text-lg w-full max-lg:text-base ">Delivery Options</div>
+            <div className="font-thin text-sm max-lg:text-xs">
               Click+Collect in store or have your items delivered straight to
               your door.
             </div>
@@ -260,10 +261,10 @@ function Cart() {
             <div className="py-8">
               <FontAwesomeIcon icon={faTruckRampBox} size="2xl" />
             </div>
-            <div className="font-semibold text-lg w-full">
+            <div className="font-semibold text-lg w-full max-lg:text-base ">
               Homewares Change of Mind Policy
             </div>
-            <div className="font-thin text-sm">
+            <div className="font-thin text-sm max-lg:text-xs">
               We want you to love your new Freedom product as much as we do.
               Return or exchange selected products within 30 days. Conditions
               and exclusions apply.
@@ -273,10 +274,10 @@ function Cart() {
             <div className="py-8">
               <FontAwesomeIcon icon={faCreditCard} size="2xl" />
             </div>
-            <div className="font-semibold text-lg w-full">
+            <div className="font-semibold text-lg w-full max-lg:text-base ">
               Flexible Payment Options
             </div>
-            <div className="font-thin text-sm">
+            <div className="font-thin text-sm max-lg:text-xs">
               Buy now, pay later with flexible payment options to suit you.
             </div>
           </div>

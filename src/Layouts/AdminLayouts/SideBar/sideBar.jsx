@@ -66,6 +66,14 @@ function SideBar() {
       All Order
     </NavLink>
   </Menu.Item>
+  <Menu.Item
+    key="5"
+    icon={<DropboxOutlined />}
+  >
+    <NavLink to="/allComments" className="">
+      All Comments
+    </NavLink>
+  </Menu.Item>
 </Menu>
     </aside>
   );

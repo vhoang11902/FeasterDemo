@@ -47,6 +47,7 @@ function ProductSearch() {
           >
           <div className="min-w-[200px] min-h-[250px] mb-3 flex justify-center">
           <img
+          alt=""
               className=""
 src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`}
             />

@@ -34,20 +34,23 @@ function OrderDetail() {
         key: order.order_detail_id,
         stt: index + 1,
       };
-      dataVariant.forEach((sku) => {
-        if (order.sku_id === sku.sku_id) {
-          sku.variants.forEach((variant) => {
-            attrValue.forEach((attr) => {
-              if (attr.id === variant.attr_id) {
-                attr.attr_product.forEach((attr_value) => {
-                  if (attr_value.attr_value_id === variant.attr_value_id) {
-                    orderData[`attr_${attr.id}`] = attr_value.value;
-                  }
-                });
-              }
+      dataVariant.forEach((skus) => {
+        skus.forEach((sku) =>{
+          if (order.sku_id === sku.sku_id) {
+            sku.variants.forEach((variant) => {
+              attrValue.forEach((attr) => {
+                if (attr.id === variant.attr_id) {
+                  attr.attr_product.forEach((attr_value) => {
+                    if (attr_value.attr_value_id === variant.attr_value_id) {
+                      orderData[`attr_${attr.id}`] = attr_value.value;
+                    }
+                  });
+                }
+              });
             });
-          });
-        }
+          }
+        })
+        
       });
       return orderData;
     });
@@ -65,23 +68,26 @@ function OrderDetail() {
       key: "product_name",
     },
   ];
+
   dataVariant.slice(0, 1).forEach((sku) => {
-    sku.variants.forEach((variant) => {
-      attrValue.forEach((attr) => {
-        if (attr.id === variant.attr_id) {
+    sku.forEach((variant) => {
+
+      variant.variants.forEach((vari) =>{attrValue.forEach((attr) => {
+        if (attr.id === vari.attr_id) {
           attr.attr_product.forEach((attr_value) => {
-            if (attr_value.attr_value_id === variant.attr_value_id) {
+            if (attr_value.attr_value_id === vari.attr_value_id) {
               columns.push({
                 title: `${attr.attr_name}`,
                 dataIndex: `attr_${attr_value.attr_id}`,
                 key: `${attr_value.value}`,
-                width: 100,
+                width: 150,
                 align: "center",
               });
             }
           });
         }
-      });
+      });})
+      
     });
   });
   columns.push(
@@ -101,7 +107,7 @@ function OrderDetail() {
       <div className="bg-white p-[1.75rem] rounded-2xl mb-5">
         <div className="card-body">
           <h4 className="text-2xl font-semibold mb-[1.25rem] text-center">
-            Order {id}
+            Order: {id}
           </h4>
         </div>
       </div>
@@ -155,6 +161,10 @@ function OrderDetail() {
               <h4 className="text-lg font-semibold mb-[1.25rem] text-center">
                 Shipping Infomation
               </h4>
+              <div className="flex mt-3 ">
+                <h2 className="text-lg font-semibold">Address: </h2>
+                <div className="text-lg">{shipping.shipping_address}</div>
+              </div>
               <div className="flex mt-3 ">
                 <h2 className="text-lg font-semibold">City: </h2>
                 <div className="text-lg">{shipping.shipping_city}</div>

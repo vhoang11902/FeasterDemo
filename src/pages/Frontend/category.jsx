@@ -7,15 +7,22 @@ import ReactPaginate from "react-paginate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import BreadCrumb from "../../components/Breadcrumb/breadCrumb";
-function Category({category_name}) {
+
+function Category() {
   const { id } = useParams();
   const [nameCategory, setNameCategory] = useState("");
-
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
-  const routes = [{ path: '/', name: 'Home' },{path:`/category/${id}`,name: nameCategory}];
+  const routes = [
+    { path: "/", name: "Home" },
+    { path: `/category/${id}`, name: nameCategory },
+  ];
+
+  // State for sorting options
+  const [sortValue, setSortValue] = useState("");
+
   useEffect(() => {
     request
       .get(`/category/${id}`)
@@ -34,9 +41,20 @@ function Category({category_name}) {
   const handlePageClick = (data) => {
     setCurrentPage(data.selected + 1);
   };
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(
+
+  // Copy array to avoid mutating original data
+  const sortedProducts = [...products];
+
+  if (sortValue === "low_to_high") {
+    sortedProducts.sort((a, b) => a.product_price - b.product_price);
+  } else if (sortValue === "high_to_low") {
+    sortedProducts.sort((a, b) => b.product_price - a.product_price);
+  }
+
+  const currentProducts = sortedProducts.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
@@ -44,13 +62,32 @@ function Category({category_name}) {
   const handleSelectProduct = (product_id) => {
     navigate(`/product/${product_id}?category=${nameCategory}`);
   };
+
+  const handleSortChange = (e) => {
+    setSortValue(e.target.value);
+  };
+
   return (
     <div className="mx-[100px] mt-5 mb-5 max-lg:mx-[20px]">
-    <div className="mb-6">
-    <BreadCrumb  routes={routes} />
-    </div>
+      <div className="mb-6">
+        <BreadCrumb routes={routes} />
+      </div>
       <div className="text-3xl font-bold ">{nameCategory}</div>
-      <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 px-10 pt-10">
+      <div className="flex justify-end py-3">
+        <span className="pr-3"></span>
+        <select
+          value={sortValue}
+          onChange={handleSortChange}
+          className="focus:outline-none h-12 border-[1px] rounded-md px-3 max-lg:h-10"
+        >
+          <option value="" defaultValue>
+            SORT BY RECCOMMEND
+          </option>
+          <option value="low_to_high">Price: Low to High</option>
+          <option value="high_to_low">Price: High to Low</option>
+        </select>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 px-10 pt-10">
         {currentProducts.map((product) => (
           <div
             onClick={() => handleSelectProduct(product.product_id)}
@@ -59,23 +96,23 @@ function Category({category_name}) {
           >
             <div className="min-w-[200px] min-h-[250px] mb-5 flex justify-center">
               <img
+                alt=""
                 className=""
                 src={`http://localhost/feaster/storage/app/public/uploads/product/${product.product_image}`}
               />
             </div>
             <div className="pt-7">
-            <h2 className="font-semibold">{product.product_name}</h2>
-            <h2 className="font-thin">Start from</h2>
-            <span className="text-2xl font-semibold">
-              {Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              })
-                .format(product.product_price)
-                .replace(/\.00$/, "")}
-            </span>
+              <h2 className="font-semibold">{product.product_name}</h2>
+              <h2 className="font-thin">Start from</h2>
+              <span className="text-2xl font-semibold">
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })
+                  .format(product.product_price)
+                  .replace(/\.00$/, "")}
+              </span>
             </div>
-            
           </div>
         ))}
       </div>

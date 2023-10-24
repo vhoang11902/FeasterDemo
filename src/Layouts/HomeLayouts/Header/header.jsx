@@ -8,15 +8,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Drawer, Menu} from "antd";
 import { FaBars } from "react-icons/fa6";
-import { useState, useEffect } from "react";
+import { useContext,useState, useEffect } from "react";
 import { HomeOutlined } from "@ant-design/icons";
 import request from "../../../utils/request";
 import { useNavigate } from "react-router-dom";
 import DrawerCart from "../../../components/CartDrawer/cartDrawer";
+import CartContext from "../../../pages/Frontend/CartContext";
 function Header() {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState("");
   const [open, setOpen] = useState(false);
+  const [cartItems, setCartItems] = useContext(CartContext);
+  const [index, setIndex] = useState(0);
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -47,62 +51,30 @@ function Header() {
     setCartItems(storedCartItems);
   }, []);
 
+
+
+  useEffect(() => {
+    let count = 0
+    if (cartItems !== null) {cartItems.forEach((item) => {
+      return count+=1;
+    })}
+    
+    setIndex(count);
+  }, [cartItems]);
+
+
   const handleCateProduct = (id) => {
     navigate(`/category/${id}`);
   };
 
-  const [cartItems, setCartItems] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    setTotal(calculateTotal(cartItems));
-  }, [cartItems]);
-  const calculateTotal = (cartItems) => {
-    let sum = 0;
-    let count = 0;
-    if (cartItems !== null) {
-      cartItems.forEach((item) => {
-        count++;
-        sum += item.quantity * item.price;
-      });
-    }
-    setIndex(count);
-    return sum;
-  };
-  const deleteItem = (item) => {
-    const newCartItems = cartItems.filter(
-      (cartItem) => cartItem.id !== item.id
-    );
-    setCartItems(newCartItems);
-    // cập nhật lại giỏ hàng trong localStorage
-    localStorage.setItem("cartItems", JSON.stringify(newCartItems));
-    // tính tổng lại sau khi xóa sản phẩm
-    setTotal(calculateTotal(newCartItems));
-  };
 
-  const minus = (item) => {
-    item.quantity > 1 && item.quantity--;
-    setCartItems([...cartItems]);
-    // cập nhật lại giỏ hàng trong localStorage
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    // tính tổng lại sau khi giảm số lượng sản phẩm
-    setTotal(calculateTotal(cartItems));
-  };
-
-  const plus = (item) => {
-    item.quantity < 10 && item.quantity++;
-    setCartItems([...cartItems]);
-    // cập nhật lại giỏ hàng trong localStorage
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    // tính tổng lại sau khi tăng số lượng sản phẩm
-    setTotal(calculateTotal(cartItems));
-  }
+  
 
   const handleSearch = (e) => {
     e.preventDefault();
     navigate(`/search/${searchData}`)};
   return (
-    <div className="sticky h-[100px] top-0 grid grid-cols-6 bg-white justify-between shadow-md">
+    <div className="sticky h-[100px] top-0 grid grid-cols-6 bg-white justify-between shadow-md max-lg:h-20">
       <div className="col-span-2 flex items-center justify-start pl-3 max-lg:col-span-3">
         <FaBars
           className="lg:hidden text-xl ml-5"

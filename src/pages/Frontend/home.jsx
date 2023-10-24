@@ -2,7 +2,6 @@ import bigImg from "../../assets/Full-Width-Hero.jpg";
 import smallImg1 from "../../assets/MicrosoftTeams-image-111-wpadlarger.jpg";
 import smallImg2 from "../../assets/MicrosoftTeams-image-112-larger.jpg";
 import bannerImg from "../../assets/onlineonlydrop.jpg";
-import img1 from "../../assets/SQ-Tiles-5.jpg";
 import img2 from "../../assets/SQ-Tiles-6.jpg";
 import about from "../../assets/abou1.jpeg";
 import about2 from "../../assets/about2.jpeg";
@@ -29,25 +28,25 @@ function Home() {
       <div className="flex flex-row">
         <div className="relative flex-[25%] mb-4 m-2 cursor-pointer">
           <span className="absolute text-2xl font-semibold uppercase top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            hello
+            
           </span>
           <img className="z-0" src={img2} alt="" />
         </div>
         <div className="relative flex-[25%] mb-4 m-2 cursor-pointer">
           <span className="absolute text-2xl font-semibold uppercase top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            hello
+            
           </span>
           <img className="z-0" src={img2} alt="" />
         </div>
         <div className="relative flex-[25%] mb-4 m-2 cursor-pointer">
           <span className="absolute text-2xl font-semibold uppercase top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            hello
+            
           </span>
           <img className="z-0" src={img2} alt="" />
         </div>
         <div className="relative flex-[25%] mb-4 m-2 cursor-pointer">
           <span className="absolute text-2xl font-semibold uppercase top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            hello
+            
           </span>
           <img className="z-0" src={img2} alt="" />
         </div>

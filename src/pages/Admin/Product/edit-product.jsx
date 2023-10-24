@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Switch } from "antd";
 import requestPrivate from "../../../utils/requestPrivate";
 import Select from "react-select";
-import { useParams } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 function EditProduct() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [formState, setFormState] = useState({
     productName: "",
     productDesc: "",
@@ -14,7 +16,6 @@ function EditProduct() {
     categoryId: "",
     status: 0,
   });
-
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [defaultOption, setDefaultOption] = useState(null);
 
@@ -23,7 +24,6 @@ function EditProduct() {
       try {
         const response = await requestPrivate.get(`/edit-product/${id}`);
         const { data } = response;
-
         setFormState({
           productName: data.product_name,
           productDesc: data.product_desc,
@@ -32,7 +32,7 @@ function EditProduct() {
           categoryId: data.category_id,
           status: data.product_status,
         });
-        const { data: categories } = await requestPrivate.get('/category');
+        const { data: categories } = await requestPrivate.get("/category");
         const options = categories.map((category) => ({
           value: category.id,
           label: category.category_name,
@@ -52,6 +52,7 @@ function EditProduct() {
 
   const handleChange = (e) => {
     const file = e.target.files[0];
+    console.log("File object:", file);
     setFormState({ ...formState, image: file });
   };
 
@@ -62,26 +63,21 @@ function EditProduct() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
-
-    formData.append("product_image", formState.image, formState.image.name);
+    formData.append("product_image", formState.image);
     formData.append("product_name", formState.productName);
     formData.append("product_price", formState.productPrice);
-    formData.append("category_id", formState.categoryId); 
+    formData.append("category_id", formState.categoryId);
     formData.append("product_desc", formState.productDesc);
     formData.append("product_status", formState.status);
 
     requestPrivate
-      .post('/save-product', formData)
+      .post(`/update-product/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
-        console.log(response.data);
-        setFormState({
-          productName: "",
-          productDesc: "",
-          productPrice: "",
-          image: null,
-          categoryId: "",
-          status: 0,
-        });
+        navigate("/allProduct");
       })
       .catch((error) => {
         console.log(error);
@@ -131,18 +127,33 @@ function EditProduct() {
                 defaultValue={formState.image?.name || ""}
               />
               {formState.image && (
-                <img src={formState.image} alt="" />
+                <img
+                  src={`http://localhost/feaster/storage/app/public/products/${formState.image}`}
+                  alt=""
+                  className="w-48"
+                />
               )}
             </div>
             <div className="mb-6">
               <div className="text-sm mb-2">Product Description:</div>
-              <textarea
+              {/* <textarea
                 value={formState.productDesc}
                 onChange={(e) =>
                   setFormState({ ...formState, productDesc: e.target.value })
                 }
                 className="w-full rounded-md border-[1px] border-[#CED4DA] py-3 px-5 focus:outline-none"
                 placeholder="Product description"
+              /> */}
+              <CKEditor
+                editor={ClassicEditor}
+                data={formState.productDesc}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setFormState((prevState) => ({
+                    ...prevState,
+                    productDesc: data,
+                  }));
+                }}
               />
             </div>
             <div className="mb-6">
@@ -167,7 +178,7 @@ function EditProduct() {
             <div className="mb-6">
               <button
                 type="submit"
-                className="bg-blue-500 text-white p-2 px-5 rounded-xl hover:bg-blue-700 transition"
+                className="bg-primary-600 text-white p-2 px-5 rounded-xl hover:bg-primary-700 transition"
               >
                 Submit
               </button>

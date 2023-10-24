@@ -5,12 +5,18 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { publicRoutes } from "./routes";
 import { privateRoutes } from "./routes";
 import { AdminLayouts } from "./Layouts";
 import { Fragment } from "react";
 import { isAuthenticated } from "./pages/Admin/Auth/checkAuth";
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+  }, [isLoggedIn]);
+
   return (
     <Router>
       <div className="App">
@@ -51,7 +57,7 @@ function App() {
                 path={route.path}
                 element={
                   route.private ? (
-                    isAuthenticated() ? (
+                    isLoggedIn  ? (
                       <Layout>
                         <Page />
                       </Layout>

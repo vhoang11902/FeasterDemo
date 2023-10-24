@@ -22,12 +22,12 @@ import Cart from "../pages/Frontend/cart";
 import CheckOut from "../pages/Frontend/checkout";
 import OrderPlace from "../pages/Frontend/orderPlace";
 import OrderDetail from "../pages/Admin/Order/orderDetail";
-
+import Comments from "../pages/Frontend/Comments";
 // import CheckOut from "../pages/Frontend/checkout";
 const publicRoutes = [
   {path: "/",component: Home,layout: HomeLayouts,},
   {path: "/home",component: Home,layout: HomeLayouts,},
-  { path: "/login", component: Login, layout: Auth },
+  { path: "/login", component: Login, layout: Auth},
   { path: "/register", component: Register, layout: Auth },
   { path: "/cart", component: Cart, layout: HomeLayouts },
   {path: "/category/:id",component: Category,layout: HomeLayouts,},
@@ -49,6 +49,7 @@ const privateRoutes = [
   { path: "/allCategory", component: AllCategory, private: true },
   { path: "/addProduct", component: AddProduct, private: true },
   { path: "/allProduct", component: AllProduct, private: true },
+  { path: "/allComments", component: Comments, private: true },
   { path: "/editProduct/:id", component: EditProduct, private: true },
   { path: "/attrProduct/:id", component: AttrProduct, private: true },
   { path: "/allOrder", component: Order, private: true },

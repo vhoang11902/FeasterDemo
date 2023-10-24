@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logo-01.png"
-
+import request from "../../../utils/request";
 function Register() {
   const [admin_email, setAdminEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,8 +11,8 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      axios.post(
-        "http://localhost/feaster/public/api/register",
+      request.post(
+        "/register",
         { admin_email, password, admin_username, admin_phone }
       );
       navigate("/login");

@@ -24,8 +24,9 @@ function CheckOut() {
     {name:"Payment"},
   ];
   const [cartItems, setCartItems] = useState([]);
+  const cartItemsRef = useRef(cartItems)
   const [total, setTotal] = useState(0);
-  const [index, setIndex] = useState("2");
+  const [index, setIndex] = useState(0);
   const [info, setInfo] = useState({
     firstName: "",
     lastName: "",
@@ -38,6 +39,7 @@ function CheckOut() {
     postalCode: "",
   });
   const infoRef = useRef(info);
+  const totalRef = useRef(total);
   const [errors, setErrors] = useState({});
   const [showPayment, setShowPayment] = useState(false);
   const [editing, setEditing] = useState(true);
@@ -50,9 +52,14 @@ function CheckOut() {
 
   useEffect(() => {
     let sum = 0;
-    cartItems.forEach((item) => {
+    let count = 0;
+    if (cartItems !== null) {
+      cartItems.forEach((item) => {
       sum += item.quantity * item.price;
+      count++;
     });
+  }
+  setIndex(count);
     setTotal(sum);
   }, [cartItems]);
 
@@ -105,50 +112,50 @@ function CheckOut() {
     }
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
-      const orderInfo = {
-        firstName: info.firstName,
-        lastName: info.lastName,
-        phoneNumber: info.phoneNumber,
-        email: info.email,
-        address: info.address,
-        city: info.city,
-        state: info.state,
-        country: info.country,
-        postalCode: info.postalCode,
-      };
       setShowPayment(true);
       setEditing(false);
     }
   };
-  useEffect(() => {
-    infoRef.current = info;
-  }, [info]);
 
   // place Order Paypal
+  useEffect(() => {
+    cartItemsRef.current = cartItems;
+  },[cartItems]);
+  useEffect(() => {
+    totalRef.current = total
+  }, [total]);
+
+    useEffect(() => {
+    infoRef.current = info;
+  },[info]);
+
 
   const createOrder = (data, actions) => {
     return actions.order.create({
       purchase_units: [
         {
           amount: {
-            value: total,
+            value: totalRef.current,
           },
         },
       ],
     });
   };
 
+
   const onApprove = (data, actions) => {
     return actions.order.capture().then(function (details) {
       const orderData = {
         user: infoRef,
-        cartItems: cartItems,
+        cartItems: cartItemsRef.current,
         status: details.status,
-        total: total,
-      };
+        total: totalRef.current,
+      }
+      // console.log(orderData)
       request
         .post(`/orderPlace`, orderData)
         .then((response) => {
+          console.log(response)
           localStorage.removeItem("cartItems");
           setCartItems([]);
           navigate(`/orderPlace/${response.data}`);
@@ -168,8 +175,8 @@ function CheckOut() {
           <BreadCrumb routes={routesPayment} />
         </div>
       </div>
-      <div className="mb-6 flex">
-        <div className="flex-[70%]  font-semibold mr-8">
+      <div className="mb-6 flex max-lg:block max-lg:block">
+        <div className="flex-[70%]  font-semibold mr-8 max-lg:mb-4 ">
           <h2 className="mb-2 text-2xl">Secure Checkout</h2>
           <h2
             style={{ display: showPayment ? "none" : "block" }}
@@ -186,7 +193,7 @@ function CheckOut() {
         </div>
         {/* cart header */}
         <div className="flex-[30%] bg-[#f9f9f9]">
-          <div className="px-6 py-[10px] flex justify-between items-center">
+          <div className="px-6 py-[10px] flex justify-between items-center max-lg:px-2">
             <div className="px-4">
               <h1 className=" text-lg font-semibold">{index} items</h1>
             </div>
@@ -206,14 +213,14 @@ function CheckOut() {
       </div>
       {/* cart content */}
 
-      <div className="pt-6 flex">
+      <div className="pt-6 flex max-lg:block">
         <div className="flex-[70%] block box-border">
           {/* inputInfo */}
           <div
             name="inputInfo"
             style={{ display: showPayment ? "none" : "block" }}
           >
-            <div className="mb-6 flex">
+            <div className="mb-6 flex max-lg:block ">
               <div className="flex-[50%] mx-2">
                 <div className="mb-2">First Name:</div>
                 <input
@@ -249,7 +256,7 @@ function CheckOut() {
                 )}
               </div>
             </div>
-            <div className="mb-6 flex">
+            <div className="mb-6 flex max-lg:block">
               <div className="flex-[50%] mx-2">
                 <div className=" mb-2">Phone Number:</div>
                 <input
@@ -302,7 +309,7 @@ function CheckOut() {
                 )}
               </div>
             </div>
-            <div className="mb-6 flex">
+            <div className="mb-6 flex max-lg:block">
               <div className="flex-[50%] mx-2">
                 <div className=" mb-2">City:</div>
                 <input
@@ -334,7 +341,7 @@ function CheckOut() {
                 )}
               </div>
             </div>
-            <div className="mb-6 flex">
+            <div className="mb-6 flex max-lg:block">
               <div className="flex-[50%] mx-2">
                 <div className=" mb-2">Country:</div>
                 <input
@@ -391,15 +398,16 @@ function CheckOut() {
                         <div className="ml-4 max-h-[149px] max-w-[149px] min-h-[149px] w-full h-full bg-white flex justify-center items-center">
                           <img
                             src={`http://localhost/feaster/storage/app/public/uploads/product/${item.product.product_image}`}
+                            alt=""
                           ></img>
                         </div>
                       </div>
                       <div className="flex-[75%] max-w-[75%] px-4 text-sm">
                         <div className="">
                           <div className="max-w-full h-11">
-                            <a className="inline-block mt-2 text-base font-medium">
+                            <p className="inline-block mt-2 text-base font-medium">
                               {item.product.product_name}
-                            </a>
+                            </p>
                           </div>
                           <div className="max-w-full">
                             {item.product.attr_value.map((attr, index) => {
@@ -425,7 +433,9 @@ function CheckOut() {
                                   .format(item.price)
                                   .replace(/\.00$/, "")}
                               </div>
-
+                              <div className="text-sm font-medium flex-[25%] ">
+                                Quantity: {item.quantity}
+                              </div>
                               <div className="flex-[35%] text-sm font-medium text-right px-4">
                                 {Intl.NumberFormat("en-US", {
                                   style: "currency",
@@ -445,7 +455,7 @@ function CheckOut() {
             )}
           </div>
         </div>
-        <div className="flex-[30%] ml-8 bg-[#f9f9f9] p-4">
+        <div className="flex-[30%] ml-8 bg-[#f9f9f9] p-4 max-lg:ml-0">
           <h4 className="font-semibold mb-4 uppercase">ORDER SUMMARY</h4>
           <div className="mt-4 ">
             <div className="mb-2 flex justify-between text-sm font-thin">

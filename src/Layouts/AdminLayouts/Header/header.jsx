@@ -26,6 +26,9 @@ function Header() {
       .post('/logout',)
       .then((response) => {
         navigate("/login");
+        console.log(localStorage.getItem('auth-token'))
+        localStorage.removeItem('auth-token');
+        console.log(localStorage.getItem('auth-token'))
       })
       .catch((error) => {
         console.log(error);
@@ -50,7 +53,7 @@ function Header() {
   return (
     <div className="sticky top-0 bg-white h-[60px] grid grid-cols-5 bg-blue shadow-lg z-30">
       <div className="flex col-span-1 items-center justify-start pl-7">
-        <NavLink to="/dashboard" className="">
+        <NavLink to="/home" className="">
           <img
             src={logo}
             alt="Logo Feaster"

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import request from "../../../utils/request";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logo-01.png";
-import Cookies from "js-cookie";
 function Login() {
   const [admin_email, setAdminEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,11 +12,12 @@ function Login() {
       const response = await request.post(
         '/login',
         { admin_email, password },
-        {
-          headers:{"Content-Type": 'application/json'},
-        }
       )
+      .then((response)=>{
+localStorage.setItem('auth-token', response.data.token);
       navigate("/dashboard");
+      })
+      
     } catch (error) {
       console.error(error);
     }

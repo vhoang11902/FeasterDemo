@@ -8,7 +8,7 @@ function CheckOut({ children }) {
     <div className="font-body">
       <CartContext.Provider value={[cartItems, setCartItems]}>
         <Header />
-        <div className=" mx-[100px] mt-5 mb-5">{children}</div>
+        <div className=" mx-[100px] mt-5 mb-5 max-lg:mx-[20px]">{children}</div>
       </CartContext.Provider>
     </div>
   );

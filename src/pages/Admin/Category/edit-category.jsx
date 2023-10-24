@@ -16,15 +16,14 @@ function EditCategory() {
       .get(`/edit-category/${id}`)
       .then((response) => 
       {
-        const { data } = response;
-        setFormState({
-          label: data.category_name,
-          desc: data.category_desc,
-          status: data.category_status,
-        });
-        
+        response.data.map((cate) => {
+          setFormState({
+            label: cate.category_name,
+            desc: cate.category_desc,
+            status: cate.category_status,
+          });
+        })
       })
-      
       .catch((error) => {
         console.log(error);
       });
@@ -95,7 +94,7 @@ function EditCategory() {
             <div className="mb-6">
               <button
                 type="submit"
-                className="bg-blue-500 text-white p-2 px-5 rounded-xl hover:bg-blue-700 transition"
+                className="bg-primary-600 text-white p-2 px-5 rounded-xl hover:bg-primary-700 transition"
               >
                 Submit
               </button>

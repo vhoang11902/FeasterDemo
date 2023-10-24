@@ -111,13 +111,13 @@ function AllProduct() {
       width: 160,
       align: "center",
       render:(_, record)=>(
-        <img src={`http://localhost/feaster/storage/app/public/uploads/product/${record.product_image}`} className="w-full"></img>
+        <img src={`http://localhost/feaster/storage/app/public/products/${record.product_image}`} alt="" className="w-full"></img>
       )
     },
     {
       title: "Variant",
       key: "action",
-      width: 120,
+      width: 100,
       align: "center",
       render: (_, record) => (
         <div className="">
@@ -127,20 +127,13 @@ function AllProduct() {
           >
             <button
               type="submit"
-              className="text-sm bg-[#E66B63] text-white p-1 px-3 rounded-xl hover:bg-[#bf4a42] transition"
+              className="text-sm bg-[#E66B63] text-white p-1 px-2 rounded-xl hover:bg-[#bf4a42] transition"
             >
               more variant
             </button>
           </Link>
         </div>
       ),
-    },
-    {
-      title: "Description",
-      dataIndex: "product_desc",
-      key: "product_desc",
-      width: 260,
-      align: "center",
     },
     {
       title: "Status",
@@ -157,7 +150,7 @@ function AllProduct() {
       render: (_, record) => (
         <div className="flex">
           <Popconfirm
-            title="Are you sure to delete this category?"
+            title="Are you sure to delete this product ?"
             onConfirm={() => confirmDelete(record.product_id)}
             onCancel={cancelDelete}
             okText="Yes"
@@ -167,7 +160,6 @@ function AllProduct() {
               <FcFullTrash />
             </button>
           </Popconfirm>
-
           <Link
             to={`/editProduct/${record.product_id}`}
             className=" text-3xl p-2"
@@ -179,8 +171,8 @@ function AllProduct() {
     },
   ];
   return (
-    <div className="block p-[2.5rem]">
-      <div className="bg-white p-[1.75rem] rounded-2xl">
+    <div className="block p-[1.5rem]">
+      <div className="bg-white p-[1.5rem] rounded-2xl">
         <div className="card-body">
           <h4 className="text-lg font-semibold mb-[1.25rem]">All Product</h4>
           <Table
@@ -191,6 +183,7 @@ function AllProduct() {
         </div>
       </div>
     </div>
+    
   );
 }
 

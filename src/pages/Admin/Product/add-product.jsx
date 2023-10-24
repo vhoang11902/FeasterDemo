@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Switch } from "antd";
+import { Switch, message } from "antd";
 import requestPrivate from "../../../utils/requestPrivate";
 import Select from "react-select";
-
+import {CKEditor} from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useNavigate } from "react-router-dom";
 function AddProduct() {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState({
     productName: "",
     productDesc: "",
@@ -50,11 +53,9 @@ function AddProduct() {
     formData.append("category_id", formState.categoryId); 
     formData.append("product_desc", formState.productDesc);
     formData.append("product_status", formState.status);
-
     requestPrivate
       .post('/save-product', formData)
       .then((response) => {
-        console.log(response.data);
         setFormState({
           productName: "",
           productDesc: "",
@@ -63,6 +64,8 @@ function AddProduct() {
           categoryId: "",
           status: 0,
         });
+        navigate('/allProduct')
+        message.success("Add product successfully !");
       })
       .catch((error) => {
         console.log(error);
@@ -113,13 +116,13 @@ function AddProduct() {
             </div>
             <div className="mb-6">
               <div className="text-sm mb-2">Product Description:</div>
-              <textarea
-                value={formState.productDesc}
-                onChange={(e) =>
-                  setFormState({ ...formState, productDesc: e.target.value })
-                }
-                className="w-full rounded-md border-[1px] border-[#CED4DA] py-3 px-5 focus:outline-none"
-                placeholder="Product description"
+              <CKEditor
+                editor={ClassicEditor}
+                data={formState.productDesc}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setFormState({ ...formState, productDesc: data });
+                }}
               />
             </div>
             <div className="mb-6">
@@ -143,7 +146,7 @@ function AddProduct() {
             <div className="mb-6">
               <button
                 type="submit"
-                className="bg-blue-500 text-white p-2 px-5 rounded-xl hover:bg-blue-700 transition"
+                className="bg-primary-600 text-white p-2 px-5 rounded-xl hover:bg-primary-700 transition"
               >
                 Submit
               </button>

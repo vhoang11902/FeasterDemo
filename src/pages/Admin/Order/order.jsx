@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import requestPrivate from "../../../utils/requestPrivate";
 import { Table, Popconfirm, message } from "antd";
 import { Link } from "react-router-dom";
-import { FcFullTrash, FcAbout} from "react-icons/fc";
+import { FcFullTrash, FcAbout, FcPrint} from "react-icons/fc";
 
 function Order() {
   const [orderInfo, setOrderInfo] = useState([]);
@@ -16,23 +16,27 @@ function Order() {
         console.log(error);
       });
   }, []);
-  const handleDelete = (order_id) => {
+  const handleDeleteOrder = (order_id) => {
     requestPrivate
-      .delete(`/delete-category/${order_id}`)
+      .delete(`/deleteOrder/${order_id}`)
       .then(() => {
-        const updatedCategories = orderInfo.filter(
-          (order_id) => orderInfo.order_code !== order_id
-        );
-        setOrderInfo(updatedCategories);
-        message.success("Category deleted successfully!");
+        requestPrivate.get('/allOrder')
+        .then((response) => {
+          setOrderInfo(response.data)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        message.success("Order deleted successfully !");
       })
       .catch((error) => {
+        message.error("Order deleted fail !");
         console.log(error);
       });
   };
 
   const confirmDelete = (id) => {
-    handleDelete(id);
+    handleDeleteOrder(id);
   };
 
   const cancelDelete = (e) => {
@@ -48,7 +52,9 @@ function Order() {
       };
     });
   };
-
+const handlePrint = (id) => {
+  console.log(id)
+}
   const columns = [
     {
       title: "STT",
@@ -70,6 +76,12 @@ function Order() {
       title: "Total Price",
       dataIndex: "order_total",
       key: "order_total",
+      render: (text, record) => Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      })
+        .format(record.order_total)
+        .replace(/\.00$/, "")
     },
     {
       title: "Payment",
@@ -85,9 +97,15 @@ function Order() {
       title: "Action",
       key: "action",
       render: (_, record) => (
+        
         <div className="flex">
+                  <button
+          onClick={() => handlePrint(record.order_code)}
+           className=" text-3xl p-2">
+          <FcPrint />
+            </button>
           <Popconfirm
-            title="Are you sure to delete this category?"
+            title="Are you sure to delete this order ?"
             onConfirm={() => confirmDelete(record.order_code)}
             onCancel={cancelDelete}
             okText="Yes"
@@ -101,6 +119,7 @@ function Order() {
           <Link to={`/orderDetail/${record.order_code}`} className=" text-3xl p-2">
             <FcAbout />
           </Link>
+
         </div>
       ),
     },
